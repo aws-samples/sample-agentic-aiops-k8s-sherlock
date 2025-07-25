@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sample-agentic-aiops-k8s-sherlock"
+version = "0.1.0"
+description = "Intelligent Kubernetes troubleshooting system using AI agents for automated incident response"
+readme = "README.md"
+authors = [
+    { name = "ahmetatalay" },
+     { name = "hasanbasriakirmak"}
+]
+keywords = ["kubernetes", "aiops", "sre", "agents", "troubleshooting"]
+requires-python = ">=3.10"
+dependencies = [
+    "strands-agents>=1.0.1",
+    "strands-agents-tools>=0.2.1",
+    "mcp",
+    "requests",
+    "opentelemetry-api>=1.20.0",
+    "opentelemetry-sdk>=1.20.0",
+    "opentelemetry-exporter-otlp>=1.20.0",
+    "nest-asyncio"
+]
+
+[project.scripts]
+sherlock-mcp-server = "sherlock.mcp_server:main"
+sherlock-cli = "sherlock.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
