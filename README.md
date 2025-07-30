@@ -29,11 +29,11 @@ This project demonstrates how to build an agentic AIOps system that can automati
 ### Quick Start
 
 ```bash
-# Install dependencies and AWS credentials
+# Install dependencies
 uv sync
 
+#(optional) create package
 uv pip install -e .
-
 
 # Testing
 python scripts/test_orchestrator.py
