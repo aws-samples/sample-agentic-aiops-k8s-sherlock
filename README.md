@@ -55,11 +55,6 @@ tail -f ~/.aws/amazonq/sherlock-mcp.log
 
 Coming soon...
 
-### Distributed Tracing Visualization
-
-![Jaeger Trace Example](docs/jaeger_trace.png)
-
-
 ### License
 
 MIT License
