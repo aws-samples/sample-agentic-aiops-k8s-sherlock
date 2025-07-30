@@ -19,7 +19,9 @@ This project demonstrates how to build an agentic AIOps system that can automati
 ```bash
 # Install dependencies and AWS credentials
 uv sync
-source .venv/bin/activate
+
+uv pip install -e .
+
 
 # Testing
 python scripts/test_orchestrator.py
