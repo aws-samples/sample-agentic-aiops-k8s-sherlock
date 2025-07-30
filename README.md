@@ -24,7 +24,6 @@ This project demonstrates how to build an agentic AIOps system that can automati
 - Export AWS credentials into terminal
 - Install [retail-store-sample-app](https://github.com/aws-containers/retail-store-sample-app)
   - Install manually cloudwatch container insights ([doc](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-EKS.html))
-  - 
 
 
 ### Quick Start
