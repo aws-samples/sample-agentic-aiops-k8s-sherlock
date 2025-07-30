@@ -14,6 +14,19 @@ This project demonstrates how to build an agentic AIOps system that can automati
 - 🤖 **Multi-Agent Coordination**: Specialized agents working together
 - 🔗 **Amazon Q Integration**: Natural language interface for investigations
 
+
+### Pre requisites
+- k8sgpt 0.4.22+ (and make sure amazonbedrock has been configured [here](https://github.com/k8sgpt-ai/k8sgpt?tab=readme-ov-file#llm-ai-backends) )
+- docker 27.3.1+
+- python 3.13+
+- kubectl 1.33+
+- aws cli 2.27.2+
+- Export AWS credentials into terminal
+- Install [retail-store-sample-app](https://github.com/aws-containers/retail-store-sample-app)
+  - Install manually cloudwatch container insights ([doc](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-EKS.html))
+  - 
+
+
 ### Quick Start
 
 ```bash
