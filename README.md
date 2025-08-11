@@ -24,8 +24,8 @@ This project demonstrates how to build an agentic AIOps system that can automati
 - Export AWS credentials into terminal
 - Install [retail-store-sample-app](https://github.com/aws-containers/retail-store-sample-app)
   - Install manually cloudwatch container insights ([doc](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-EKS.html))
-
-
+- Make sure you have docker daemon running (e.g. Docker Desktop)
+- Install ([AWS MCP Server for CloudWatch](https://github.com/awslabs/mcp/tree/main/src/cloudwatch-mcp-server) and ([AWS MCP Server for DynamoDB](https://github.com/awslabs/mcp/tree/main/src/dynamodb-mcp-server))
 ### Quick Start
 
 ```bash
@@ -34,6 +34,11 @@ uv sync
 
 #(optional) create package
 uv pip install -e .
+
+# Execute the aws eks update-kubeconfig command to bridge the authentication gap between your local tools and the remote AWS EKS cluster. 
+# This is needed by k8sgpt to analyze pods, deployments, events in the EKS cluster
+aws eks update-kubeconfig --region us-east-1 --name retail-store
+
 
 # Testing
 python scripts/test_orchestrator.py
