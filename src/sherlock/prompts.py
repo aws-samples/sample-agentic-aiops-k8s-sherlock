@@ -271,8 +271,8 @@ ENVIRONMENT OVERVIEW
 
 #### Amazon DynamoDB
 - **Purpose**: Cart service persistence
-- **Configuration**: On-demand billing, auto-scaling
-- **Table**: `Items` (configurable via `RETAIL_CART_PERSISTENCE_DYNAMODB_TABLE_NAME`)
+- **Configuration**: Provisioned mode
+- **Table**: `retail-store-carts`
 
 #### Amazon ElastiCache (Redis)
 - **Purpose**: Checkout service session storage

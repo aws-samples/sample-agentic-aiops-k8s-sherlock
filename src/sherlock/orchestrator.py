@@ -1,5 +1,6 @@
 """SRE Agent Orchestrator for coordinating specialized agents."""
 import logging
+from datetime import datetime
 from strands import Agent
 from strands.multiagent.swarm import Swarm
 from sherlock.agents.diagnostic_agent import get_k8sgpt_mcp_client
@@ -54,7 +55,12 @@ async def orchestrate(query: str):
             # Create and execute swarm
             swarm = Swarm([diagnostic_agent, observability_agent, persistence_agent])
             logger.info("Running comprehensive SRE swarm analysis...")
-            result = await swarm.invoke_async(query)
+            
+            # Enhance query with current time
+            current_time = datetime.now().strftime("%A, %Y-%m-%d %H:%M:%S UTC")
+            enhanced_query = f"Current time: {current_time}\n\nUser query: {query}"
+            
+            result = await swarm.invoke_async(enhanced_query)
         
         final_result = {
             "status": "success",

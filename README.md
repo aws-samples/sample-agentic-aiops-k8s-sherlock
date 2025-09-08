@@ -6,6 +6,10 @@ An intelligent Kubernetes troubleshooting system using AI agents for automated i
 
 This project demonstrates how to build an agentic AIOps system that can automatically investigate Kubernetes issues, analyze observability data, and provide actionable insights for SRE teams.
 
+### Architecture
+
+![Architecture](docs/sherlock-arc.png)
+
 ### Features
 
 - 🔍 **Intelligent Diagnostics**: AI-powered Kubernetes cluster analysis
@@ -70,9 +74,6 @@ python scripts/test_orchestrator.py
 tail -f ~/.aws/amazonq/sherlock-mcp.log
 ```
 
-### Architecture
-
-Coming soon...
 
 ## Security
 

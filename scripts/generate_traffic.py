@@ -74,8 +74,8 @@ def signal_handler(sig, frame, port_forward_process=None):
 def main():
     parser = argparse.ArgumentParser(description="Generate high traffic directly to the cart service")
     parser.add_argument("--cart-namespace", default="carts", help="Namespace of the cart service")
-    parser.add_argument("--duration", type=int, default=300, help="Duration in seconds")
-    parser.add_argument("--concurrency", type=int, default=1000, help="Number of concurrent workers")
+    parser.add_argument("--duration", type=int, default=600, help="Duration in seconds")
+    parser.add_argument("--concurrency", type=int, default=500, help="Number of concurrent workers")
     parser.add_argument("--rate-limit", type=int, help="Rate limit in queries per second (QPS) per worker")
     parser.add_argument("--port", type=int, default=8080, help="Local port for port forwarding")
     args = parser.parse_args()
