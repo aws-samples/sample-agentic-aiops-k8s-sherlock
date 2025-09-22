@@ -3,7 +3,7 @@ import logging
 from datetime import datetime
 from strands import Agent
 from strands.multiagent.swarm import Swarm
-from sherlock.agents.diagnostic_agent import get_k8sgpt_mcp_client
+from sherlock.agents.diagnostic_agent import get_k8sgpt_mcp_client, get_eks_mcp_client
 from sherlock.agents.observability_agent import get_cloudwatch_mcp_client
 from sherlock.agents.persistence_agent import get_dynamodb_mcp_client
 from sherlock.prompts import (
@@ -14,30 +14,44 @@ from sherlock.prompts import (
 
 logger = logging.getLogger(__name__)
 
-async def orchestrate(query: str):
-    """Orchestrate a comprehensive investigation using specialized agents."""
+async def orchestrate(query: str, diagnostic_agent: str = "k8sgpt"):
+    """Orchestrate a comprehensive investigation using specialized agents.
+    
+    Args:
+        query: The investigation query
+        diagnostic_agent: Which diagnostic agent to use ("k8sgpt" or "eks-mcp")
+    """
     logger.info(f"Starting orchestration for query: {query}")
+    logger.info(f"Using diagnostic agent: {diagnostic_agent}")
     
     try:
         # Create multiple MCP clients for different services
-        k8sgpt_client = get_k8sgpt_mcp_client()
+        if diagnostic_agent == "eks-mcp":
+            diagnostic_client = get_eks_mcp_client()
+            diagnostic_name = "EKS MCP"
+        elif diagnostic_agent == "k8sgpt":
+            diagnostic_client = get_k8sgpt_mcp_client()
+            diagnostic_name = "K8sGPT"
+        else:
+            raise ValueError(f"Invalid diagnostic agent: {diagnostic_agent}. Must be 'k8sgpt' or 'eks-mcp'")
+            
         cloudwatch_client = get_cloudwatch_mcp_client()
         dynamodb_client = get_dynamodb_mcp_client()
         
         # Use all MCP clients together (as shown in MCP docs)
-        with k8sgpt_client, cloudwatch_client, dynamodb_client:
+        with diagnostic_client, cloudwatch_client, dynamodb_client:
             # Get tools from all MCP servers
-            k8sgpt_tools = k8sgpt_client.list_tools_sync()
+            diagnostic_tools = diagnostic_client.list_tools_sync()
             cloudwatch_tools = cloudwatch_client.list_tools_sync()
             dynamodb_tools = dynamodb_client.list_tools_sync()
             
-            logger.info(f"Retrieved {len(k8sgpt_tools)} K8sGPT tools, {len(cloudwatch_tools)} CloudWatch tools, {len(dynamodb_tools)} DynamoDB tools")
+            logger.info(f"Retrieved {len(diagnostic_tools)} {diagnostic_name} tools, {len(cloudwatch_tools)} CloudWatch tools, {len(dynamodb_tools)} DynamoDB tools")
             
             # Create agents with MCP tools and trace attributes
-            diagnostic_agent = Agent(
+            diagnostic_agent_instance = Agent(
                 name="diagnostic_agent",
                 system_prompt=DIAGNOSTIC_AGENT_SWARM_PROMPT,
-                tools=k8sgpt_tools,
+                tools=diagnostic_tools,
                 trace_attributes={
                     "session.id": f"sherlock-{hash(query) % 10000}",
                     "user.id": "Sherlock",
@@ -86,7 +100,7 @@ async def orchestrate(query: str):
             )
             
             # Create and execute swarm
-            swarm = Swarm([diagnostic_agent, observability_agent, persistence_agent])
+            swarm = Swarm([diagnostic_agent_instance, observability_agent, persistence_agent])
             logger.info("Running comprehensive SRE swarm analysis...")
             
             # Enhance query with current time

@@ -7,6 +7,7 @@ import time
 import logging
 import os
 import asyncio
+import argparse
 from sherlock.orchestrator import orchestrate
 from sherlock.config import Config
 
@@ -17,16 +18,29 @@ logger = logging.getLogger(__name__)
 
 async def main():
     """Main function for the orchestrator test."""
-    print("\n🔧 New SRE Agent Orchestrator Test\n")
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(description="Test SRE Agent Orchestrator")
+    parser.add_argument(
+        "--diagnostic-agent", 
+        choices=["k8sgpt", "eks-mcp"], 
+        default="eks-mcp",
+        help="Choose diagnostic agent: k8sgpt or eks-mcp (default: eks-mcp)"
+    )
+    parser.add_argument(
+        "--query",
+        default="Could you analyze why the carts service is having issues?",
+        help="Investigation query (default: analyze carts service issues)"
+    )
+    
+    args = parser.parse_args()
+    
+    print(f"\n🔧 New SRE Agent Orchestrator Test")
+    print(f"📊 Diagnostic Agent: {args.diagnostic_agent}")
+    print(f"❓ Query: {args.query}\n")
     
     try:
         start_time = time.time()
-        result = await orchestrate("Could you analyze why the carts service is having issues?")
-#        result = await orchestrate("My catalog pod had a restart. Why did it happen? When? Is everything recovered? Any issues still pending due to the pod termination?")   # orchestrate uses hardcoded task
-        #result = await orchestrate("What is the cpu utilization of carts service in yesterday?")   # orchestrate uses hardcoded task
-
-#        result = await orchestrate("Can you tell me what was the last error from the carts service? And when it did take place?")   # orchestrate uses hardcoded task
-#     result = await orchestrate("Can you provide me a detailed summary of my retail store application? What are the nodes, the pods and the services? Their names, their status? Their latest metrics and logs? I want to understand the existing system status.")   # orchestrate uses hardcoded task
+        result = await orchestrate(args.query, args.diagnostic_agent)
         elapsed = time.time() - start_time
         
         print(str(result))
@@ -42,9 +56,15 @@ async def main():
             print(f"Average cycle time: {metrics_summary.get('average_cycle_time', 'N/A'):.2f}s")
         
         print(f"\nExecution time: {elapsed:.2f} seconds")
+        print(f"Diagnostic agent used: {args.diagnostic_agent}")
 
     except Exception as e:
         print(f"\nAn error occurred: {str(e)}")
+        print("Make sure you have:")
+        print("- AWS credentials configured")
+        print("- kubectl access to EKS cluster")
+        print("- k8sgpt installed (if using k8sgpt agent)")
+        print("- Docker running (if using eks-mcp agent)")
 
 if __name__ == "__main__":
     asyncio.run(main())
