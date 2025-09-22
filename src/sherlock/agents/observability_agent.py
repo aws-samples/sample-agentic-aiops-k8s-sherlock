@@ -11,7 +11,7 @@ def get_cloudwatch_mcp_client():
     aws_region = os.getenv("AWS_REGION", "us-east-1")
     
     return MCPClient(
-        lambda: stdio_client
+        lambda: stdio_client(
             StdioServerParameters(
                 command="docker",
                 args=[
