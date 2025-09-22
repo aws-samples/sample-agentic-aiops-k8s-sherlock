@@ -33,23 +33,53 @@ async def orchestrate(query: str):
             
             logger.info(f"Retrieved {len(k8sgpt_tools)} K8sGPT tools, {len(cloudwatch_tools)} CloudWatch tools, {len(dynamodb_tools)} DynamoDB tools")
             
-            # Create agents with MCP tools directly (no nested agents!)
+            # Create agents with MCP tools and trace attributes
             diagnostic_agent = Agent(
                 name="diagnostic_agent",
                 system_prompt=DIAGNOSTIC_AGENT_SWARM_PROMPT,
-                tools=k8sgpt_tools
+                tools=k8sgpt_tools,
+                trace_attributes={
+                    "session.id": f"sherlock-{hash(query) % 10000}",
+                    "user.id": "sre-team",
+                    "agent.type": "diagnostic",
+                    "langfuse.tags": [
+                        "AIOps-K8s-Sherlock",
+                        "Diagnostics",
+                        "Agent-Swarm"
+                    ]
+                }
             )
             
             observability_agent = Agent(
                 name="observability_agent",
                 system_prompt=OBSERVABILITY_AGENT_SWARM_PROMPT,
-                tools=cloudwatch_tools
+                tools=cloudwatch_tools,
+                trace_attributes={
+                    "session.id": f"sherlock-{hash(query) % 10000}",
+                    "user.id": "sre-team",
+                    "agent.type": "observability",
+                    "langfuse.tags": [
+                        "AIOps-K8s-Sherlock",
+                        "Observability",
+                        "Agent-Swarm"
+                    ]
+                }
             )
             
             persistence_agent = Agent(
                 name="persistence_agent",
                 system_prompt=PERSISTENCE_AGENT_SWARM_PROMPT,
-                tools=dynamodb_tools
+                tools=dynamodb_tools,
+                trace_attributes={
+                    "session.id": f"sherlock-{hash(query) % 10000}",
+                    "user.id": "sre-team",
+                    "agent.type": "persistence",
+                    "langfuse.tags": [
+                        "AIOps-K8s-Sherlock",
+                        "Persistence",
+                        "Agent-Swarm"
+                    ]
+                }
             )
             
             # Create and execute swarm

@@ -21,8 +21,9 @@ async def main():
     
     try:
         start_time = time.time()
-        #result = await orchestrate("My catalog pod had a restart. Why did it happen? When? Is everything recovered? Any issues still pending due to the pod termination?")   # orchestrate uses hardcoded task
-        result = await orchestrate("What is the cpu utilization of carts service in yesterday?")   # orchestrate uses hardcoded task
+        result = await orchestrate("Could you analyze why the carts service is having issues?")
+#        result = await orchestrate("My catalog pod had a restart. Why did it happen? When? Is everything recovered? Any issues still pending due to the pod termination?")   # orchestrate uses hardcoded task
+        #result = await orchestrate("What is the cpu utilization of carts service in yesterday?")   # orchestrate uses hardcoded task
 
 #        result = await orchestrate("Can you tell me what was the last error from the carts service? And when it did take place?")   # orchestrate uses hardcoded task
 #     result = await orchestrate("Can you provide me a detailed summary of my retail store application? What are the nodes, the pods and the services? Their names, their status? Their latest metrics and logs? I want to understand the existing system status.")   # orchestrate uses hardcoded task
