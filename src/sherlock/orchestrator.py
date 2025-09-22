@@ -40,8 +40,9 @@ async def orchestrate(query: str):
                 tools=k8sgpt_tools,
                 trace_attributes={
                     "session.id": f"sherlock-{hash(query) % 10000}",
-                    "user.id": "sre-team",
+                    "user.id": "Sherlock",
                     "agent.type": "diagnostic",
+                    "trace.name": "AIOps-Sherlock-Diagnostics",
                     "langfuse.tags": [
                         "AIOps-K8s-Sherlock",
                         "Diagnostics",
@@ -56,8 +57,9 @@ async def orchestrate(query: str):
                 tools=cloudwatch_tools,
                 trace_attributes={
                     "session.id": f"sherlock-{hash(query) % 10000}",
-                    "user.id": "sre-team",
+                    "user.id": "Sherlock",
                     "agent.type": "observability",
+                    "trace.name": "AIOps-Sherlock-Observability",
                     "langfuse.tags": [
                         "AIOps-K8s-Sherlock",
                         "Observability",
@@ -72,8 +74,9 @@ async def orchestrate(query: str):
                 tools=dynamodb_tools,
                 trace_attributes={
                     "session.id": f"sherlock-{hash(query) % 10000}",
-                    "user.id": "sre-team",
+                    "user.id": "Sherlock",
                     "agent.type": "persistence",
+                    "trace.name": "AIOps-Sherlock-Persistence",
                     "langfuse.tags": [
                         "AIOps-K8s-Sherlock",
                         "Persistence",
