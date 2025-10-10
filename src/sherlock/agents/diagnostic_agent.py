@@ -44,7 +44,8 @@ def get_eks_mcp_client():
                     "--env", f"AWS_SESSION_TOKEN={os.getenv('AWS_SESSION_TOKEN', '')}",
                     "--env", "FASTMCP_LOG_LEVEL=ERROR",
                     "--volume", f"{os.path.expanduser('~')}/.aws:/root/.aws:ro",
-                    "awslabs/eks-mcp-server:latest"
+                    "awslabs/eks-mcp-server:latest",
+                    "--allow-sensitive-data-access"
                 ],
                 env={},
                 timeout=30
