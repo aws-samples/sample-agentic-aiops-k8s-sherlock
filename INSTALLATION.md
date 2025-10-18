@@ -5,7 +5,8 @@ This guide will help you set up the complete Sherlock SRE Investigation System w
 ## 📋 Prerequisites
 
 - Amazon Linux 2 or compatible Linux distribution
-- Docker installed and running
+- **Python 3.13+** installed and available
+- **Docker** installed and running
 - Internet connectivity for downloading packages
 - Sudo privileges
 
