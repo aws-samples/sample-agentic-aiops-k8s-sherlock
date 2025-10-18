@@ -22,9 +22,9 @@ async def main():
     parser = argparse.ArgumentParser(description="Test SRE Agent Orchestrator")
     parser.add_argument(
         "--diagnostic-agent", 
-        choices=["k8sgpt", "eks-mcp"], 
+        choices=["eks-mcp"], 
         default="eks-mcp",
-        help="Choose diagnostic agent: k8sgpt or eks-mcp (default: eks-mcp)"
+        help="Choose diagnostic agent: eks-mcp (default: eks-mcp)"
     )
     parser.add_argument(
         "--query",
@@ -63,7 +63,6 @@ async def main():
         print("Make sure you have:")
         print("- AWS credentials configured")
         print("- kubectl access to EKS cluster")
-        print("- k8sgpt installed (if using k8sgpt agent)")
         print("- Docker running (if using eks-mcp agent)")
 
 if __name__ == "__main__":

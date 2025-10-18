@@ -4,7 +4,7 @@ from datetime import datetime
 from strands import Agent
 from strands.multiagent.swarm import Swarm
 from langfuse import get_client
-from sherlock.agents.diagnostic_agent import get_k8sgpt_mcp_client, get_eks_mcp_client
+from sherlock.agents.diagnostic_agent import get_eks_mcp_client
 from sherlock.agents.observability_agent import get_cloudwatch_mcp_client
 from sherlock.agents.persistence_agent import get_dynamodb_mcp_client
 from sherlock.prompts import (
@@ -28,12 +28,12 @@ def format_investigation_results(result: dict) -> str:
     else:
         return str(result)
 
-async def orchestrate(query: str, diagnostic_agent: str = "k8sgpt"):
+async def orchestrate(query: str, diagnostic_agent: str = "eks-mcp"):
     """Orchestrate a comprehensive investigation using specialized agents.
     
     Args:
         query: The investigation query
-        diagnostic_agent: Which diagnostic agent to use ("k8sgpt" or "eks-mcp")
+        diagnostic_agent: Which diagnostic agent to use ("eks-mcp")
     """
     logger.info(f"Starting orchestration for query: {query}")
     logger.info(f"Using diagnostic agent: {diagnostic_agent}")
@@ -50,11 +50,8 @@ async def orchestrate(query: str, diagnostic_agent: str = "k8sgpt"):
             if diagnostic_agent == "eks-mcp":
                 diagnostic_client = get_eks_mcp_client()
                 diagnostic_name = "EKS MCP"
-            elif diagnostic_agent == "k8sgpt":
-                diagnostic_client = get_k8sgpt_mcp_client()
-                diagnostic_name = "K8sGPT"
             else:
-                raise ValueError(f"Invalid diagnostic agent: {diagnostic_agent}. Must be 'k8sgpt' or 'eks-mcp'")
+                raise ValueError(f"Invalid diagnostic agent: {diagnostic_agent}. Must be 'eks-mcp'")
                 
             cloudwatch_client = get_cloudwatch_mcp_client()
             dynamodb_client = get_dynamodb_mcp_client()
