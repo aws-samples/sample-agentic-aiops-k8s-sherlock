@@ -1,6 +1,6 @@
 """MCP server for SRE Agent Toolkit."""
 from mcp.server import FastMCP
-from sherlock.orchestrator import orchestrate
+from sherlock.orchestrator import orchestrate, format_investigation_results
 from sherlock.config import Config
 import logging
 import os
@@ -18,27 +18,20 @@ mcp = FastMCP("SRE Agent Toolkit")
     name="sherlock", 
     description="Comprehensive SRE investigation using K8s diagnostics, CloudWatch observability, and DynamoDB analysis"
 )
-def sherlock(query: str) -> str:
+def sherlock(query: str, diagnostic_agent: str = "eks-mcp") -> str:
     import asyncio
     logger.info(f"SRE Orchestrator investigating: {query}")
+    logger.info(f"Using diagnostic agent: {diagnostic_agent}")
     
     try:
         # Execute orchestration
-        result = asyncio.run(orchestrate(query))
+        result = asyncio.run(orchestrate(query, diagnostic_agent))
         
-        # Format result for Amazon Q
-        if isinstance(result, dict):
-            # Extract agent results for better readability
-            formatted_output = "## SRE Investigation Results\n\n"
-            
-            for agent_name, agent_result in result.items():
-                formatted_output += f"### {agent_name.replace('_', ' ').title()}\n"
-                formatted_output += f"{agent_result}\n\n"
-            
-            logger.info("SRE Orchestrator completed successfully")
-            return formatted_output
-        else:
-            return str(result)
+        # Format result for Amazon Q using shared formatter
+        formatted_output = format_investigation_results(result)
+        
+        logger.info("SRE Orchestrator completed successfully")
+        return formatted_output
             
     except Exception as e:
         error_msg = f"SRE investigation failed: {str(e)}"

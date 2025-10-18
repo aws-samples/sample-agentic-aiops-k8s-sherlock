@@ -14,14 +14,15 @@ authors = [
 keywords = ["kubernetes", "aiops", "sre", "agents", "troubleshooting"]
 requires-python = ">=3.10"
 dependencies = [
-    "strands-agents==1.1.0",
-    "strands-agents-tools==0.2.2",
-    "mcp==1.12.2",
+    "strands-agents==1.13.0",
+    "strands-agents-tools==0.2.12",
+    "mcp==1.18.0",
     "requests==2.32.4",
     "opentelemetry-api==1.35.0",
     "opentelemetry-sdk==1.35.0",
     "opentelemetry-exporter-otlp==1.35.0",
-    "nest-asyncio==1.6.0"
+    "nest-asyncio==1.6.0",
+    "langfuse==3.7.0"
 ]
 
 [project.scripts]
