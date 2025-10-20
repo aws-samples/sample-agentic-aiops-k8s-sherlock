@@ -18,14 +18,15 @@ mcp = FastMCP("SRE Agent Toolkit")
     name="sherlock", 
     description="Comprehensive SRE investigation using K8s diagnostics, CloudWatch observability, and DynamoDB analysis"
 )
-def sherlock(query: str, diagnostic_agent: str = "eks-mcp") -> str:
+def sherlock(query: str, diagnostic_agent: str = "eks-mcp", model_id: str = "us.anthropic.claude-sonnet-4-20250514-v1:0") -> str:
     import asyncio
     logger.info(f"SRE Orchestrator investigating: {query}")
     logger.info(f"Using diagnostic agent: {diagnostic_agent}")
+    logger.info(f"Using Bedrock model: {model_id}")
     
     try:
         # Execute orchestration
-        result = asyncio.run(orchestrate(query, diagnostic_agent))
+        result = asyncio.run(orchestrate(query, diagnostic_agent, model_id))
         
         # Format result for Amazon Q using shared formatter
         formatted_output = format_investigation_results(result)
