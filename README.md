@@ -109,7 +109,6 @@ You can reference the [AWS Bedrock Supported Models documentation](https://docs.
 
 **Default Models:**
 - Test Orchestrator: `us.anthropic.claude-sonnet-4-20250514-v1:0`
-- MCP Server: `anthropic.claude-3-5-sonnet-20241022-v2:0`
 
 ## 🚦 Generate Traffic Load
 

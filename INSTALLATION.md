@@ -224,7 +224,6 @@ uv --version
 
 ### Getting Help
 
-- Check the logs in `~/.aws/amazonq/sherlock-mcp.log`
 - Verify AWS credentials: `aws sts get-caller-identity`
 - Test Kubernetes access: `kubectl get pods`
 - Review the main README.md for usage examples
@@ -236,7 +235,6 @@ After successful installation and deployment:
 1. Start using Sherlock to investigate your retail store application
 2. Explore different types of queries about your infrastructure
 3. Set up monitoring and observability for your applications
-4. Experiment with the MCP server integration
 
 ## 🎉 You're Ready!
 
