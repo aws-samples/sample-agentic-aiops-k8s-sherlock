@@ -31,16 +31,22 @@ async def main():
         default="Could you analyze why the carts service is having issues?",
         help="Investigation query (default: analyze carts service issues)"
     )
+    parser.add_argument(
+        "--model-id",
+        default="us.anthropic.claude-sonnet-4-20250514-v1:0",
+        help="Bedrock model ID to use (default: us.anthropic.claude-sonnet-4-20250514-v1:0)"
+    )
     
     args = parser.parse_args()
     
     print(f"\n🔧 New SRE Agent Orchestrator Test")
     print(f"📊 Diagnostic Agent: {args.diagnostic_agent}")
+    print(f"🤖 Bedrock Model: {args.model_id}")
     print(f"❓ Query: {args.query}\n")
     
     try:
         start_time = time.time()
-        result = await orchestrate(args.query, args.diagnostic_agent)
+        result = await orchestrate(args.query, args.diagnostic_agent, args.model_id)
         elapsed = time.time() - start_time
         
         print(str(result))
@@ -57,6 +63,7 @@ async def main():
         
         print(f"\nExecution time: {elapsed:.2f} seconds")
         print(f"Diagnostic agent used: {args.diagnostic_agent}")
+        print(f"Bedrock model used: {args.model_id}")
 
     except Exception as e:
         print(f"\nAn error occurred: {str(e)}")

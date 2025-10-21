@@ -90,9 +90,25 @@ aws dynamodb modify-table \
     --billing-mode PROVISIONED \
     --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1
 
-# Test the orchestrator (AI agents will detect and analyze K8s, DynamoDB constraints and traffic patterns)
+# Test the orchestrator (AI agents will detect and analyze K8s, DynamoDB constraints and traffic patterns). Default model id is: "us.anthropic.claude-sonnet-4-20250514-v1:0" 
 python scripts/test_orchestrator.py
+
+# Test with a specific Bedrock model
+python scripts/test_orchestrator.py --model-id "us.anthropic.claude-sonnet-4-20250514-v1:0"
+
+# Test with custom query and model
+python scripts/test_orchestrator.py --query "Analyze the carts service performance issues" --model-id "amazon.nova-pro-v1:0"
+
+# View available options
+python scripts/test_orchestrator.py --help
+
 ```
+
+### Available Models
+You can reference the [AWS Bedrock Supported Models documentation](https://docs.aws.amazon.com/bedrock/latest/userguide/models-supported.html) to find appropriate models for your specific requirements.
+
+**Default Models:**
+- Test Orchestrator: `us.anthropic.claude-sonnet-4-20250514-v1:0`
 
 ## 🚦 Generate Traffic Load
 

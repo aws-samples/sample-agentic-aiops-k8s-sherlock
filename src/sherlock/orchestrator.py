@@ -2,6 +2,7 @@
 import logging
 from datetime import datetime
 from strands import Agent
+from strands.models import BedrockModel
 from strands.multiagent.swarm import Swarm
 from langfuse import get_client
 from sherlock.agents.diagnostic_agent import get_eks_mcp_client
@@ -28,22 +29,24 @@ def format_investigation_results(result: dict) -> str:
     else:
         return str(result)
 
-async def orchestrate(query: str, diagnostic_agent: str = "eks-mcp"):
+async def orchestrate(query: str, diagnostic_agent: str = "eks-mcp", model_id: str = "us.anthropic.claude-sonnet-4-20250514-v1:0"):
     """Orchestrate a comprehensive investigation using specialized agents.
     
     Args:
         query: The investigation query
         diagnostic_agent: Which diagnostic agent to use ("eks-mcp")
+        model_id: Bedrock model ID to use for all agents
     """
     logger.info(f"Starting orchestration for query: {query}")
     logger.info(f"Using diagnostic agent: {diagnostic_agent}")
+    logger.info(f"Using Bedrock model: {model_id}")
     
     # Wrap entire orchestration in Langfuse span to control trace output
     langfuse = get_client()
     
     with langfuse.start_as_current_span(
         name="sherlock-investigation",
-        input={"query": query, "diagnostic_agent": diagnostic_agent}
+        input={"query": query, "diagnostic_agent": diagnostic_agent, "model_id": model_id}
     ) as investigation_span:
         try:
             # Create multiple MCP clients for different services
@@ -65,15 +68,20 @@ async def orchestrate(query: str, diagnostic_agent: str = "eks-mcp"):
                 
                 logger.info(f"Retrieved {len(diagnostic_tools)} {diagnostic_name} tools, {len(cloudwatch_tools)} CloudWatch tools, {len(dynamodb_tools)} DynamoDB tools")
                 
-                # Create agents with MCP tools and trace attributes
+                # Create BedrockModel instance for all agents
+                bedrock_model = BedrockModel(model_id=model_id)
+                
+                # Create agents with MCP tools, BedrockModel, and trace attributes
                 diagnostic_agent_instance = Agent(
                     name="diagnostic_agent",
+                    model=bedrock_model,
                     system_prompt=DIAGNOSTIC_AGENT_SWARM_PROMPT,
                     tools=diagnostic_tools,
                     trace_attributes={
                         "session.id": f"sherlock-{hash(query) % 10000}",
                         "user.id": "Sherlock",
                         "agent.type": "diagnostic",
+                        "model.id": model_id,
                         "trace.name": "AIOps-Sherlock-Diagnostics",
                         "langfuse.tags": [
                             "AIOps-K8s-Sherlock",
@@ -85,12 +93,14 @@ async def orchestrate(query: str, diagnostic_agent: str = "eks-mcp"):
                 
                 observability_agent = Agent(
                     name="observability_agent",
+                    model=bedrock_model,
                     system_prompt=OBSERVABILITY_AGENT_SWARM_PROMPT,
                     tools=cloudwatch_tools,
                     trace_attributes={
                         "session.id": f"sherlock-{hash(query) % 10000}",
                         "user.id": "Sherlock",
                         "agent.type": "observability",
+                        "model.id": model_id,
                         "trace.name": "AIOps-Sherlock-Observability",
                         "langfuse.tags": [
                             "AIOps-K8s-Sherlock",
@@ -102,12 +112,14 @@ async def orchestrate(query: str, diagnostic_agent: str = "eks-mcp"):
                 
                 persistence_agent = Agent(
                     name="persistence_agent",
+                    model=bedrock_model,
                     system_prompt=PERSISTENCE_AGENT_SWARM_PROMPT,
                     tools=dynamodb_tools,
                     trace_attributes={
                         "session.id": f"sherlock-{hash(query) % 10000}",
                         "user.id": "Sherlock",
                         "agent.type": "persistence",
+                        "model.id": model_id,
                         "trace.name": "AIOps-Sherlock-Persistence",
                         "langfuse.tags": [
                             "AIOps-K8s-Sherlock",
