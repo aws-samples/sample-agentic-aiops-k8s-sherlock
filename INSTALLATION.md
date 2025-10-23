@@ -4,9 +4,7 @@ This guide will help you set up the complete Sherlock SRE Investigation System w
 
 ## 📋 Prerequisites
 
-- Amazon Linux 2 or compatible Linux distribution
-- **Python 3.10+** installed and available
-- **Docker** installed and running
+- Amazon Linux 2023(64bit arm or x64) or compatible Linux distribution
 - Internet connectivity for downloading packages
 - Sudo privileges
 
@@ -23,33 +21,121 @@ sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinu
 sudo yum -y install terraform
 ```
 
-### 2. Install Kubernetes CLI (kubectl)
+### 2. Install Docker
 
-Install kubectl for ARM64 architecture:
+Install and configure Docker for container management:
 
 ```bash
-# Download and install kubectl for ARM64
-curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/arm64/kubectl"
-chmod +x kubectl
-sudo mv kubectl /usr/local/bin/
+# Install Docker
+sudo dnf install -y docker
+
+# Add current user to docker group
+sudo usermod -aG docker $(whoami)
+
+# Start Docker service
+sudo systemctl start docker.service
+sudo systemctl enable docker.service
+
+# Verify Docker installation
+echo "Docker installed. Checking configuration"
+docker --version
+sudo systemctl status docker.service
 ```
 
-### 3. Install UV (Python Package Manager)
+**Note:** You may need to log out and log back in from terminal for the docker group changes to take effect.
+
+### 3. Install Python 3.11
+
+Install Python 3.11 and set up aliases:
+
+```bash
+# Install Python 3.11
+sudo dnf install -y python3.11 python3.11-pip python3.11-devel
+
+# Create python alias for current session
+alias python=python3.11
+alias pip=pip3.11
+
+# Add aliases to bashrc for persistence
+echo 'alias python=python3.11' >> ~/.bashrc
+echo 'alias pip=pip3.11' >> ~/.bashrc
+
+# Verify installation
+python --version
+pip --version
+```
+
+### 4. Install UV (Python Package Manager)
 
 UV is a fast Python package manager:
 
 ```bash
-# Install uv
-curl -LsSf https://astral.sh/uv/install.sh | sh
+# Download and install uv
+curl -LsSf https://astral.sh/uv/install.sh -o /tmp/uv-install.sh
+bash /tmp/uv-install.sh
+rm -f /tmp/uv-install.sh
+
+# Add uv to PATH for current session
+export PATH="$HOME/.local/bin:$PATH"
+
+# Verify installation
+uv --version
 ```
 
-### 4. Configure Shell Environment
+### 5. Install oha (HTTP Load Testing Tool)
 
-Set up Python alias and PATH:
+Install oha for load testing the cart service:
 
 ```bash
-# Add Python alias and uv to PATH
-echo 'alias python=python3' >> ~/.bashrc
+# Detect architecture and download appropriate oha binary
+ARCH=$(uname -m)
+if [ "$ARCH" = "x86_64" ]; then
+    curl -L -o oha https://github.com/hatoo/oha/releases/download/v1.10.0/oha-linux-amd64
+elif [ "$ARCH" = "aarch64" ]; then
+    curl -L -o oha https://github.com/hatoo/oha/releases/download/v1.10.0/oha-linux-arm64
+else
+    echo "Unsupported architecture: $ARCH"
+    exit 1
+fi
+
+chmod +x oha
+sudo mv oha /usr/local/bin/
+
+# Verify installation
+oha --version
+```
+
+### 6. Install Kubernetes CLI (kubectl)
+
+Install kubectl with automatic architecture detection:
+
+```bash
+# Detect architecture and download appropriate kubectl binary
+ARCH=$(uname -m)
+if [ "$ARCH" = "x86_64" ]; then
+    KUBECTL_ARCH="amd64"
+elif [ "$ARCH" = "aarch64" ]; then
+    KUBECTL_ARCH="arm64"
+else
+    echo "Unsupported architecture: $ARCH"
+    exit 1
+fi
+
+# Download and install kubectl
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/${KUBECTL_ARCH}/kubectl"
+chmod +x kubectl
+sudo mv kubectl /usr/local/bin/
+
+# Verify installation
+kubectl version --client
+```
+
+### 7. Configure Shell Environment
+
+Set up PATH for installed tools:
+
+```bash
+# Add uv to PATH for persistence
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
 
 # Apply changes
@@ -57,7 +143,7 @@ source ~/.bashrc
 source $HOME/.local/bin/env
 ```
 
-### 5. Clone and Setup MCP Repository
+### 8. Clone and Setup MCP Repository
 
 Download the AWS MCP servers:
 
@@ -71,7 +157,7 @@ git fetch --all
 git checkout -b release-2025-08-22 origin/release/2025.08.20250822184623
 ```
 
-### 6. Build MCP Server Docker Images
+### 9. Build MCP Server Docker Images
 
 Build the required MCP server images:
 
@@ -93,7 +179,7 @@ cd ../../src/dynamodb-mcp-server
 docker build -t awslabs/dynamodb-mcp-server:latest .
 ```
 
-### 7. Clone Required Repositories
+### 10. Clone Required Repositories
 
 Set up the required repositories in your home directory:
 
@@ -106,7 +192,7 @@ git clone https://github.com/aws-samples/sample-agentic-aiops-k8s-sherlock.git
 git clone https://github.com/aws-containers/retail-store-sample-app.git
 ```
 
-### 8. Setup Jaeger Tracing (Optional)
+### 11. Setup Jaeger Tracing (Optional)
 
 **Note**: This step is optional as the current configuration uses Langfuse for telemetry.
 
@@ -136,6 +222,7 @@ After installation, verify all components are working:
 echo "=== Installation Verification ==="
 echo "Architecture: $(uname -m)"
 echo "Terraform: $(terraform --version | head -1)"
+echo "oha: $(oha --version 2>/dev/null || echo 'oha not found')"
 echo "kubectl: $(kubectl version --client --short 2>/dev/null || echo 'kubectl installed')"
 echo "Python: $(python --version 2>/dev/null || python3 --version)"
 echo "uv: $(uv --version)"
@@ -212,7 +299,7 @@ kubectl get services -A
 
 ```bash
 # Check if all tools are installed
-which terraform kubectl python uv docker
+which terraform oha kubectl python uv docker
 
 # Check Docker images
 docker images | grep -E "(eks-mcp-server|cloudwatch-mcp-server|dynamodb-mcp-server)"
@@ -220,6 +307,7 @@ docker images | grep -E "(eks-mcp-server|cloudwatch-mcp-server|dynamodb-mcp-serv
 # Check Python environment
 python --version
 uv --version
+oha --version
 ```
 
 ### Getting Help

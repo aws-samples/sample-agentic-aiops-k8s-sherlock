@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Script to generate high traffic directly to the cart service using hey.
+Script to generate high traffic directly to the cart service using oha.
 This will test DynamoDB read throughput and potentially crash the service.
 """
 import argparse
@@ -33,10 +33,10 @@ def generate_random_customer_id():
     """Generate a random customer ID."""
     return ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
 
-def run_hey(duration, concurrency, rate_limit=None):
-    """Run hey to generate traffic directly to the cart service."""
-    # Build the hey command
-    cmd = ["hey"]
+def run_oha(duration, concurrency, rate_limit=None):
+    """Run oha to generate traffic directly to the cart service."""
+    # Build the oha command
+    cmd = ["oha"]
     
     # Add duration
     cmd.extend(["-z", f"{duration}s"])
@@ -53,9 +53,9 @@ def run_hey(duration, concurrency, rate_limit=None):
     target_url = f"http://localhost:8080/carts/{customer_id}"
     cmd.append(target_url)
     
-    print(f"Running hey with command: {' '.join(cmd)}")
+    print(f"Running oha with command: {' '.join(cmd)}")
     
-    # Run hey
+    # Run oha
     subprocess.run(cmd)
 
 def cleanup(port_forward_process):
@@ -94,8 +94,8 @@ def main():
         if args.rate_limit:
             print(f"Rate limit: {args.rate_limit} QPS per worker")
         
-        # Run hey
-        run_hey(args.duration, args.concurrency, args.rate_limit)
+        # Run oha
+        run_oha(args.duration, args.concurrency, args.rate_limit)
     finally:
         # Clean up
         cleanup(port_forward_process)
