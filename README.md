@@ -127,6 +127,9 @@ export LANGFUSE_HOST="https://us.cloud.langfuse.com"
 # Configure kubectl access to retail store cluster
 aws eks --region us-east-1 update-kubeconfig --name retail-store
 
+# Expose the carts service externally for load traffic
+kubectl patch service carts -n carts -p '{"spec":{"type":"LoadBalancer"}}'
+
 # Intentionally restrict carts deployment resources to create incidents for AI agent demonstration
 kubectl patch deployment carts -n carts --patch '{
   "spec": {
@@ -204,6 +207,10 @@ aws eks --region us-east-1 update-kubeconfig --name retail-store
 
 # Generate continuous traffic to carts service
 python scripts/generate_traffic.py
+
+# (First time) Generate continuous traffic to carts service with one time setup if you've NOT patched carts service with load balancer, and deployment metrics above.
+python scripts/generate_traffic.py --setup
+
 ```
 
 This will create load on the constrained carts service, making the resource and database throttling issues more observable by the AI agents.
