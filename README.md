@@ -151,13 +151,25 @@ kubectl patch deployment carts -n carts --patch '{
 }'
 
 # Intentionally throttle DynamoDB table to create database incidents for AI agent demonstration
-aws dynamodb modify-table \
+aws dynamodb update-table \
     --table-name retail-store-carts \
     --billing-mode PROVISIONED \
-    --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1
+    --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 \
+    --global-secondary-index-updates '[
+        {
+            "Update": {
+                "IndexName": "idx_global_customerId",
+                "ProvisionedThroughput": {
+                    "ReadCapacityUnits": 1,
+                    "WriteCapacityUnits": 1
+                }
+            }
+        }
+    ]'
 
 # Test the orchestrator (AI agents will detect and analyze K8s, DynamoDB constraints and traffic patterns). Default model id is: "us.anthropic.claude-sonnet-4-20250514-v1:0" 
-python scripts/test_orchestrator.py
+python ./scripts/test_orchestrator.py --query "Could you analyze why the carts service is having issues?"
+
 
 # Test with a specific Bedrock model
 python scripts/test_orchestrator.py --model-id "us.anthropic.claude-sonnet-4-20250514-v1:0"
