@@ -170,12 +170,12 @@ aws dynamodb update-table \
         }
     ]'
 
-# Test the orchestrator (AI agents will detect and analyze K8s, DynamoDB constraints and traffic patterns). Default model id is: "us.anthropic.claude-sonnet-4-20250514-v1:0" 
+# Test the orchestrator (AI agents will detect and analyze K8s, DynamoDB constraints and traffic patterns). Default model id is: "us.anthropic.claude-opus-4-6-v1" 
 python ./scripts/test_orchestrator.py --query "Could you analyze why the carts service is having issues?"
 
 
 # Test with a specific Bedrock model
-python scripts/test_orchestrator.py --model-id "us.anthropic.claude-sonnet-4-20250514-v1:0"
+python scripts/test_orchestrator.py --model-id "us.anthropic.claude-opus-4-6-v1"
 
 # Test with custom query and model
 python scripts/test_orchestrator.py --query "Analyze the carts service performance issues" --model-id "amazon.nova-pro-v1:0"
@@ -189,7 +189,7 @@ python scripts/test_orchestrator.py --help
 You can reference the [AWS Bedrock Supported Models documentation](https://docs.aws.amazon.com/bedrock/latest/userguide/models-supported.html) to find appropriate models for your specific requirements.
 
 **Default Models:**
-- Test Orchestrator: `us.anthropic.claude-sonnet-4-20250514-v1:0`
+- Test Orchestrator: `us.anthropic.claude-opus-4-6-v1`
 
 ## 🚦 Generate Traffic Load
 

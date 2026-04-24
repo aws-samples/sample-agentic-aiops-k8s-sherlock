@@ -18,7 +18,7 @@ mcp = FastMCP("SRE Agent Toolkit")
     name="sherlock", 
     description="Comprehensive SRE investigation using K8s diagnostics, CloudWatch observability, and DynamoDB analysis"
 )
-def sherlock(query: str, diagnostic_agent: str = "eks-mcp", model_id: str = "us.anthropic.claude-sonnet-4-20250514-v1:0") -> str:
+def sherlock(query: str, diagnostic_agent: str = "eks-mcp", model_id: str = "us.anthropic.claude-opus-4-6-v1") -> str:
     import asyncio
     logger.info(f"SRE Orchestrator investigating: {query}")
     logger.info(f"Using diagnostic agent: {diagnostic_agent}")

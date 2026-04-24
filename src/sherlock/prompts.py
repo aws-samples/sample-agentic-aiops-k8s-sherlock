@@ -410,7 +410,7 @@ RETAIL_UI_ENDPOINTS_CHECKOUT=http://checkout.checkout.svc:80
 # AI Chat Bot (Optional)
 RETAIL_UI_CHAT_ENABLED=false
 RETAIL_UI_CHAT_PROVIDER=bedrock
-RETAIL_UI_CHAT_MODEL=anthropic.claude-3-5-sonnet-20241022-v2:0
+RETAIL_UI_CHAT_MODEL=us.anthropic.claude-opus-4-6-v1
 RETAIL_UI_CHAT_BEDROCK_REGION=us-west-2
 ```
 

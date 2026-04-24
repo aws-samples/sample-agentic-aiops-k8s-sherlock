@@ -29,7 +29,7 @@ def format_investigation_results(result: dict) -> str:
     else:
         return str(result)
 
-async def orchestrate(query: str, diagnostic_agent: str = "eks-mcp", model_id: str = "us.anthropic.claude-sonnet-4-20250514-v1:0"):
+async def orchestrate(query: str, diagnostic_agent: str = "eks-mcp", model_id: str = "us.anthropic.claude-opus-4-6-v1"):
     """Orchestrate a comprehensive investigation using specialized agents.
     
     Args:

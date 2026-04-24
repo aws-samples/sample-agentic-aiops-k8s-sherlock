@@ -33,8 +33,8 @@ async def main():
     )
     parser.add_argument(
         "--model-id",
-        default="us.anthropic.claude-sonnet-4-20250514-v1:0",
-        help="Bedrock model ID to use (default: us.anthropic.claude-sonnet-4-20250514-v1:0)"
+        default="us.anthropic.claude-opus-4-6-v1",
+        help="Bedrock model ID to use (default: us.anthropic.claude-opus-4-6-v1)"
     )
     
     args = parser.parse_args()
