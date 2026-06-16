@@ -16,7 +16,7 @@ requires-python = ">=3.10"
 dependencies = [
     "strands-agents==1.13.0",
     "strands-agents-tools==0.2.12",
-    "mcp==1.18.0",
+    "mcp==1.23.0",
     "requests==2.32.4",
     "opentelemetry-api==1.35.0",
     "opentelemetry-sdk==1.35.0",
